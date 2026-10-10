@@ -67,7 +67,7 @@ class MLPClassifier(nn.Module):
             num_classes: int, number of classes
         """
         super().__init__()
-        hidden_dim = 256
+        hidden_dim = 128
         self.network = nn.Sequential(
             nn.Flatten(),
             nn.Linear(3 * h * w, hidden_dim),
@@ -85,7 +85,7 @@ class MLPClassifierDeep(nn.Module):
         h: int = 64,
         w: int = 64,
         num_classes: int = 6,
-        hidden_dim: int = 256,
+        hidden_dim: int = 128,
         num_layers: int = 3,
     ):
         super().__init__()
@@ -113,7 +113,7 @@ class MLPClassifierDeepResidual(nn.Module):
         h: int = 64,
         w: int = 64,
         num_classes: int = 6,
-        hidden_dim: int = 256,
+        hidden_dim: int = 128,
         num_layers: int = 3,
     ):
         super().__init__()

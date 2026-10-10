@@ -67,6 +67,7 @@ class MLPClassifier(nn.Module):
             num_classes: int, number of classes
         """
         super().__init__()
+        hidden_dim = 256
         self.network = nn.Sequential(
             nn.Flatten(),
             nn.Linear(3 * h * w, hidden_dim),

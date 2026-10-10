@@ -85,27 +85,20 @@ class MLPClassifierDeep(nn.Module):
         h: int = 64,
         w: int = 64,
         num_classes: int = 6,
+        hidden_dim: int = 256,
+        num_layers: int = 3,
     ):
-        """
-        An MLP with multiple hidden layers
-
-        Args:
-            h: int, height of image
-            w: int, width of image
-            num_classes: int
-
-        Hint - you can add more arguments to the constructor such as:
-            hidden_dim: int, size of hidden layers
-            num_layers: int, number of hidden layers
-        """
         super().__init__()
-        layers = [nn.Flatten(), nn.Linear(3 * h * w, hidden_dim), nn.ReLU()]
 
-        for _ in range(num_layers - 1):
+        layers = [nn.Flatten()]
+        input_dim = 3 * h * w
+
+        for _ in range(num_layers):
             layers.extend([
-                nn.Linear(hidden_dim, hidden_dim),
+                nn.Linear(input_dim, hidden_dim),
                 nn.ReLU(),
             ])
+            input_dim = hidden_dim
 
         layers.append(nn.Linear(hidden_dim, num_classes))
         self.network = nn.Sequential(*layers)
@@ -120,20 +113,14 @@ class MLPClassifierDeepResidual(nn.Module):
         h: int = 64,
         w: int = 64,
         num_classes: int = 6,
+        hidden_dim: int = 256,
+        num_layers: int = 3,
     ):
-        """
-        Args:
-            h: int, height of image
-            w: int, width of image
-            num_classes: int
-
-        Hint - you can add more arguments to the constructor such as:
-            hidden_dim: int, size of hidden layers
-            num_layers: int, number of hidden layers
-        """
         super().__init__()
+
         self.flatten = nn.Flatten()
         self.input_layer = nn.Linear(3 * h * w, hidden_dim)
+
         self.blocks = nn.ModuleList([
             nn.Sequential(
                 nn.Linear(hidden_dim, hidden_dim),
@@ -142,18 +129,16 @@ class MLPClassifierDeepResidual(nn.Module):
             )
             for _ in range(num_layers)
         ])
-        self.activation = nn.ReLU()
+
         self.output_layer = nn.Linear(hidden_dim, num_classes)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = self.flatten(x)
-        x = self.activation(self.input_layer(x))
+        x = self.input_layer(self.flatten(x))
 
         for block in self.blocks:
-            x = self.activation(x + block(x))
+            x = torch.relu(x + block(x))
 
         return self.output_layer(x)
-
 
 
 model_factory = {

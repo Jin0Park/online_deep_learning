@@ -62,7 +62,18 @@ def train(
             img, label = img.to(device), label.to(device)
 
             # TODO: implement training step
-            raise NotImplementedError("Training step not implemented")
+            logits = model(img)
+            loss = loss_func(logits, label)
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            logger.add_scalar("train_loss", loss.item(), global_step)
+
+            predictions = logits.argmax(dim=1)
+            accuracy = (predictions == label).float().mean().item()
+            metrics["train_acc"].append(accuracy)
 
             global_step += 1
 
@@ -73,14 +84,18 @@ def train(
             for img, label in val_data:
                 img, label = img.to(device), label.to(device)
 
-                # TODO: compute validation accuracy
-                raise NotImplementedError("Validation accuracy not implemented")
+                logits = model(img)
+                predictions = logits.argmax(dim=1)
+
+                accuracy = (predictions == label).float().mean().item()
+                metrics["val_acc"].append(accuracy)
 
         # log average train and val accuracy to tensorboard
         epoch_train_acc = torch.as_tensor(metrics["train_acc"]).mean()
         epoch_val_acc = torch.as_tensor(metrics["val_acc"]).mean()
 
-        raise NotImplementedError("Logging not implemented")
+        logger.add_scalar("train_accuracy", epoch_train_acc, global_step)
+        logger.add_scalar("val_accuracy", epoch_val_acc, global_step)
 
         # print on first, last, every 10th epoch
         if epoch == 0 or epoch == num_epoch - 1 or (epoch + 1) % 10 == 0:

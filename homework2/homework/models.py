@@ -11,6 +11,9 @@ from pathlib import Path
 import torch
 import torch.nn as nn
 
+"""
+    This file includes AI generated code
+"""
 
 class ClassificationLoss(nn.Module):
     def forward(self, logits: torch.Tensor, target: torch.LongTensor) -> torch.Tensor:

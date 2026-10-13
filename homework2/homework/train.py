@@ -9,6 +9,9 @@ import torch.utils.tensorboard as tb
 from .models import ClassificationLoss, load_model, save_model
 from .utils import load_data
 
+"""
+    This file includes AI generated code
+"""
 
 def train(
     exp_dir: str = "logs",
